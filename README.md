@@ -14,7 +14,7 @@ Imagine that you have something to hide in your notes. Well, you're lucky, becau
 -   go to settings > community plugins > Password Protection v2 and Enable password
 -   set any password you want on the modal
 
-![screenshot-full](https://sun9-72.userapi.com/impg/ja9a_y8AvW69dmQZa3UZAGKw4KPWJsLONeayZw/LqYPy7aiyrE.jpg?size=320x258&quality=95&sign=37ad94accedcf315f242aaca7c7fa0ba&c_uniq_tag=4bORGUznV1rgQ0G5Z73LOcRzc3efR2NKUhKxFzIFYws&type=album)
+![screenshot-full](https://sun9-46.userapi.com/impg/Q93RViGGxyCJNNEoZvOS_11vpD4jBr9TqCeCgw/m7Z31A-FdVY.jpg?size=1033x866&quality=95&sign=ab039cc5e346d25f70b7c4eac58726c5&type=album)
 
 ## Settings ⚙
 
