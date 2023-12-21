@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "password-protection-v2",
+	"name": "Password Protection v2",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Lock and Protect your notes from other people.",
+	"author": "Mikail Gadzhikhanov",
+	"authorUrl": "https://github.com/mmiksaa",
+	"fundingUrl": "https://buymeacoffee.com/gadgihanovm",
 	"isDesktopOnly": false
 }

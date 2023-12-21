@@ -1,96 +1,33 @@
-# Obsidian Sample Plugin
+# <img height="26"  style="height: 26px; max-width: 100%;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/2023_Obsidian_logo.svg/1200px-2023_Obsidian_logo.svg.png"  > Obsidian Password Protection
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+### Protect and Hide your notes from other people. 🔒
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+This plugin for [Obsidian](https://obsidian.md/) let you set any password you want!
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+**Why do i need that?**
+Imagine that you have something to hide in your notes. Well, you're lucky, because you have Password Protect ;D
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+![screenshot-full](https://sun9-60.userapi.com/impg/OVolxXnQGP32XMe_L62TgA_VT2thX8NxmUoy2Q/Khc5yYjszb4.jpg?size=1328x951&quality=95&sign=dc7eb407e94b078c7a2c5fff78e4d3c5&type=album)
 
-## First time developing plugins?
+## Set password 🔑
 
-Quick starting guide for new plugin devs:
+-   go to settings > community plugins > Password Protection v2 and Enable password
+-   set any password you want on the modal
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+![screenshot-full](https://sun9-72.userapi.com/impg/ja9a_y8AvW69dmQZa3UZAGKw4KPWJsLONeayZw/LqYPy7aiyrE.jpg?size=320x258&quality=95&sign=37ad94accedcf315f242aaca7c7fa0ba&c_uniq_tag=4bORGUznV1rgQ0G5Z73LOcRzc3efR2NKUhKxFzIFYws&type=album)
 
-## Releasing new releases
+## Settings ⚙
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+**Disable/Enable the password**: if you want to create a new password you, have to click Enable. If you want to Disable the password you need to verify modal.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+**Show animations**: if you Enable this settings, you will have animations. First animation is on the title lock emoji. The second one when you confirm your password you can see transition blur
 
-## Adding your plugin to the community plugin list
+**Hide ribbon icon**: enable if you dont want to see icon on the ribbon panel. This panel is located on the left side. You can block Obsidian (set password lock) if you click on ribbon icon
 
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+---
 
-## How to use
+**This plugin will be developed and added new features** 🧬
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+If you find this plugin and workflow useful, you can give me some coffee money ☕
 
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
+<img height="36" style="height: 36px; max-width: 100%;" src="https://camo.githubusercontent.com/aac4075a25423395c82284fc46fe0bcafaede1ae87c01b61afb251b145597695/68747470733a2f2f63646e2e6b6f2d66692e636f6d2f63646e2f6b6f6669312e706e673f763d33"  alt="Buy Me a Coffee at ko-fi.com">
