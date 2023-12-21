@@ -1,7 +1,7 @@
 {
-	"name": "password-protection-v2",
+	"name": "protected-note",
 	"version": "1.0.0",
-	"description": "Lock and Protect your notes from other people",
+	"description": "set Password and Protect your notes from other people",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
