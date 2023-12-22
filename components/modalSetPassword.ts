@@ -23,8 +23,8 @@ export class ModalSetPassword extends Modal {
 
 		contentEl.createEl("h1", { text: "Create the Password" });
 
-		const div_input = contentEl.createDiv();
-		div_input.classList.add("password_modal__box");
+		const div_input = contentEl.createDiv({ cls: "password_modal__box" });
+		// div_input.classList.add("");
 
 		//create the inputs and put it inside the div
 		const input_pass = div_input.createEl("input", {

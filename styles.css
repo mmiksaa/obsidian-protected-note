@@ -42,7 +42,7 @@
 	display: inline-block;
 }
 
-.password_modal__shake_anim {
+.shake_anim {
 	animation: shake 0.3s;
 	animation-direction: alternate;
 }

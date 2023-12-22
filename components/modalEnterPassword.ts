@@ -7,6 +7,7 @@ export class ModalEnterPassword extends Modal {
 	description: string;
 	onSubmit?: () => void;
 	submited: boolean;
+	lockIcon: HTMLSpanElement;
 
 	constructor(app: App, plugin: ExamplePlugin, onSubmit?: () => void) {
 		super(app);
@@ -26,13 +27,11 @@ export class ModalEnterPassword extends Modal {
 
 		modalEl.classList.add("password_modal");
 
-		contentEl.createEl("h1", { text: "Valid the user" });
-		const title = contentEl.querySelector("h1");
-
-		if (title) {
-			//we make that to give our emoji animation
-			title.innerHTML = `${title.textContent} <span class="password_modal__icon">🔒</span>`;
-		}
+		const title = contentEl.createEl("h1", { text: "Valid the user " });
+		const lockIcon = title.createEl("span", {
+			text: "🔒",
+			cls: "password_modal__icon",
+		});
 
 		//delete the close button
 		const close_btn = document.querySelector(
@@ -73,18 +72,18 @@ export class ModalEnterPassword extends Modal {
 					.setButtonText("SUBMIT")
 					.setCta()
 					.onClick(() => {
-						this.comparePassword();
+						this.comparePassword(lockIcon);
 					})
 			);
 
 		password_input.addEventListener("keypress", (event) => {
 			if (event.key === "Enter") {
-				this.comparePassword();
+				this.comparePassword(lockIcon);
 			}
 		});
 	}
 
-	async comparePassword() {
+	async comparePassword(lockIcon: HTMLSpanElement) {
 		if (this.value !== this.plugin.settings.password) {
 			//if the password isnt correct
 
@@ -97,21 +96,17 @@ export class ModalEnterPassword extends Modal {
 				desc.classList.add("password_modal__alert");
 			}
 
-			const icon = document.querySelector(".password_modal__icon");
-
 			//if animations are set to false, it is not shown.
 			if (this.plugin.settings.animations) {
-				//repeatble animation trick
-				if (icon) icon.removeClass("password_modal__shake_anim");
+				lockIcon.removeClass("shake_anim");
+
 				setTimeout(function () {
-					if (icon) icon.addClass("password_modal__shake_anim");
+					lockIcon.addClass("shake_anim");
 				}, 10);
 			}
 		} else {
 			if (this.plugin.settings.animations) {
-				const icon = document.querySelector(".password_modal__icon");
-
-				if (icon) icon.textContent = "🔓";
+				lockIcon.textContent = "🔓";
 				await new Promise((resolve) => setTimeout(resolve, 50));
 			}
 
