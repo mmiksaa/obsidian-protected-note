@@ -143,7 +143,12 @@ export class ModalEnterPassword extends Modal {
 				const containerBlur = document.querySelector(
 					".app-container"
 				) as HTMLDivElement;
-				if (containerBlur) containerBlur.style.animation = "blur 0.3s";
+				if (containerBlur) containerBlur.classList.add("blur");
+
+				//remove blur effect after 5ml second
+				setTimeout(() => {
+					containerBlur.classList.remove("blur");
+				}, 500);
 			}
 
 			if (this.onSubmit) {

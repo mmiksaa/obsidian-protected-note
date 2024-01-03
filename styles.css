@@ -47,6 +47,10 @@
 	animation-direction: alternate;
 }
 
+.blur {
+	animation: blur 0.3s;
+}
+
 @keyframes blur {
 	from {
 		filter: blur(15px);
