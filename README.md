@@ -28,4 +28,4 @@ Imagine that you have something to hide in your notes. Well, you're lucky, becau
 
 If you find this plugin and workflow useful, you can give me some coffee money ☕
 
-[<img height="36" style="height: 36px; max-width: 100%;" src="https://camo.githubusercontent.com/aac4075a25423395c82284fc46fe0bcafaede1ae87c01b61afb251b145597695/68747470733a2f2f63646e2e6b6f2d66692e636f6d2f63646e2f6b6f6669312e706e673f763d33"  alt="Buy Me a Coffee at ko-fi.com">](https://buymeacoffee.com/gadgihanovm)
+[<img height="36" style="height: 36px; max-width: 100%;" src="https://camo.githubusercontent.com/2c6e7262afbee355cd59f269bf3077d4b840f9a36128e8b8b7ff091d251940ae/68747470733a2f2f63646e2e6275796d6561636f666665652e636f6d2f627574746f6e732f76322f617269616c2d6f72616e67652e706e67"  alt="Buy Me a Coffee at buy me a cooffee com">](https://buymeacoffee.com/gadgihanovm)
