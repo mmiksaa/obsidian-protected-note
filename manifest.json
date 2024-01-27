@@ -1,7 +1,7 @@
 {
 	"id": "protected-note",
 	"name": "Protected Note",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "set Password and Protect your notes from other people.",
 	"author": "Mikail Gadzhikhanov",
