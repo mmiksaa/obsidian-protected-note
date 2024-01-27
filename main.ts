@@ -32,18 +32,16 @@ export default class PasswordPlugin extends Plugin {
 
 		//it works only like this.
 
-		if (!this.settings.hideRibbonIcon) {
-			addIcon("lock127", lockSVG);
-			this.addRibbonIcon("lock127", "Block Obsidian", () => {
-				if (this.settings.enablePass) {
-					new ModalEnterPassword(this.app, this).open();
-				} else {
-					new Notice(
-						"You must set a password if you want to use protection!"
-					);
-				}
-			});
-		}
+		addIcon("lock127", lockSVG);
+		this.addRibbonIcon("lock127", "Block Obsidian", () => {
+			if (this.settings.enablePass) {
+				new ModalEnterPassword(this.app, this).open();
+			} else {
+				new Notice(
+					"You must set a password if you want to use protection!"
+				);
+			}
+		});
 
 		//create our settings
 		this.addSettingTab(new SettingsTab(this.app, this));
