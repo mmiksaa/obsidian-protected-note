@@ -1,9 +1,9 @@
 {
 	"id": "protected-note",
 	"name": "Protected Note",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "set Password and Protect your notes from other people.",
+	"description": "Set Password and Protect your notes from other people. Encrypt and Decrypt all notes!",
 	"author": "Mikail Gadzhikhanov",
 	"authorUrl": "https://github.com/mmiksaa",
 	"fundingUrl": "https://buymeacoffee.com/gadgihanovm",
