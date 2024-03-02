@@ -9,6 +9,7 @@ export interface PluginSettings {
 	animations: boolean;
 	fileEncrypt: { encrypt: boolean; isAlreadyEncrypted: boolean };
 	autoLock: string;
+	isFirstLoad: boolean;
 }
 
 export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
@@ -17,6 +18,7 @@ export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
 	animations: true,
 	fileEncrypt: { encrypt: false, isAlreadyEncrypted: false },
 	autoLock: "0",
+	isFirstLoad: true,
 };
 
 export class SettingsTab extends PluginSettingTab {
@@ -53,6 +55,7 @@ export class SettingsTab extends PluginSettingTab {
 								async () => {
 									if (!this.plugin.toggleFlag) {
 										this.plugin.settings.enablePass = false;
+										this.plugin.settings.password = "";
 										this.plugin.settings.autoLock = "0";
 										this.plugin.settings.fileEncrypt.encrypt =
 											false;
