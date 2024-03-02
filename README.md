@@ -4,25 +4,36 @@
 
 This plugin for [Obsidian](https://obsidian.md/) let you set any password you want!
 
-**Why do i need that?**
+**Why do i need that?** \
 Imagine that you have something to hide in your notes. Well, you're lucky, because you have protected note ;D
 
-**Warning**: this plugin only block the user from access the notes via obsidian, but since all notes are always locally stored on the users device, accessing them via the local file system will still work.
+**WARNING ❗** \
+Make sure you read the entire documentation, especially about encryption. Remember that it's in beta.
 
 ![screenshot-full](https://sun9-60.userapi.com/impg/OVolxXnQGP32XMe_L62TgA_VT2thX8NxmUoy2Q/Khc5yYjszb4.jpg?size=1328x951&quality=95&sign=dc7eb407e94b078c7a2c5fff78e4d3c5&type=album)
 
 ## Set password 🔑
 
--   go to settings > community plugins > protected note and enable password
--   set any password you want on the modal
+-   go to settings > community plugins > protected note and enable password.
+-   set any password you want on the modal.
 
-## Settings ⚙
+## Encrypt and Decrypt 💾
+
+-   now you can encrypt all .md files.
+-   make sure that you have backed up your files before enabling encryption.
+-   when you exit obsidian, all files won't be encrypted. This happens because obsidian doesn't allow the encryption function to start when you're closing obsidian (_if you know how to encrypt files when you're leaving obsidian help me with your code_).
+-   if you want to encrypt all your files when you leave you can use the ribbon icon.
+-   encryption was tested on Android and Windows. Be careful if you want to use it on other operating system.
+
+## Settings (all) ⚙
 
 **Disable/enable the password**: if you want to create a new password you, have to click enable. If you want to disable the password you need to verify modal.
 
 **Show animations**: if you enable this settings, you will have animations. First animation is on the title lock emoji. The second one when you confirm your password you can see transition blur
 
-**Hide ribbon icon**: enable if you dont want to see icon on the ribbon panel. This panel is located on the left side. You can block Obsidian (set password lock) if you click on ribbon icon
+**Auto lock**: enable if you want to block obsidian if you're not active.
+
+**File encryption**: encrypt and decrypt all files using cipher aes.
 
 ---
 

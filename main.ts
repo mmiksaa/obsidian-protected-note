@@ -1,39 +1,45 @@
-import { Notice, Plugin, addIcon, setIcon } from "obsidian";
+import { Notice, Plugin, addIcon } from "obsidian";
 import { ModalEnterPassword } from "./components/modalEnterPassword";
-import { SettingsTab } from "./components/settings";
+import {
+	DEFAULT_SETTINGS,
+	PluginSettings,
+	SettingsTab,
+} from "./components/settings";
 import { lockSVG } from "./components/svgIcons";
-
-interface PluginSettings {
-	password: string;
-	enablePass: boolean;
-	animations: boolean;
-	hideRibbonIcon: boolean;
-}
-
-const DEFAULT_SETTINGS: Partial<PluginSettings> = {
-	password: "",
-	enablePass: false,
-	animations: true,
-	hideRibbonIcon: false,
-};
+import { Encrypt } from "components/encrypt";
+import { AutoLock } from "components/autolock";
 
 export default class PasswordPlugin extends Plugin {
 	settings: PluginSettings;
 	toggleFlag: boolean;
-	canCancleModal: boolean;
+	isLogged: boolean;
 
 	async onload() {
 		await this.loadSettings();
-		this.canCancleModal = false;
+		this.isLogged = false;
+		// const basePath: string = (this.app.vault.adapter as any).basePath;
 
-		if (this.settings.enablePass) {
-			new ModalEnterPassword(this.app, this).open();
-		}
+		this.app.workspace.onLayoutReady(async () => {
+			if (this.settings.enablePass) {
+				new ModalEnterPassword(this.app, this).open();
+			}
+
+			if (this.settings.enablePass && this.settings.autoLock !== "0") {
+				new AutoLock(
+					this.app,
+					this,
+					this.settings.autoLock
+				).startTimer();
+			}
+		});
 
 		//it works only like this.
+		const ribbonText = this.settings.fileEncrypt.encrypt
+			? "Encrypt the files and block obsidian"
+			: "Block Obsidian";
 
 		addIcon("lock127", lockSVG);
-		this.addRibbonIcon("lock127", "Block Obsidian", () => {
+		this.addRibbonIcon("lock127", ribbonText, async () => {
 			if (this.settings.enablePass) {
 				new ModalEnterPassword(this.app, this).open();
 			} else {
@@ -43,7 +49,7 @@ export default class PasswordPlugin extends Plugin {
 			}
 		});
 
-		//create our settings
+		//creating our settings
 		this.addSettingTab(new SettingsTab(this.app, this));
 	}
 

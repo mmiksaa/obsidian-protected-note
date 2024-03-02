@@ -1,24 +1,45 @@
-import ExamplePlugin from "main";
-import { App, Modal, Notice, Setting } from "obsidian";
+import main from "main";
+import { App, Modal, Notice, Setting, moment } from "obsidian";
+import { hash } from "./hash";
+import { Decrypt } from "./decrypt";
+import { Encrypt } from "./encrypt";
 
 export class ModalEnterPassword extends Modal {
-	plugin: ExamplePlugin;
+	plugin: main;
 	value: string;
 	description: string;
-	onSubmit?: () => void;
 	submited: boolean;
 	lockIcon: HTMLSpanElement;
+	onSubmit?: () => void;
+	canCancelModal?: boolean;
 
-	constructor(app: App, plugin: ExamplePlugin, onSubmit?: () => void) {
+	constructor(
+		app: App,
+		plugin: main,
+		canCancelModal?: boolean,
+		onSubmit?: () => void
+	) {
 		super(app);
 		this.plugin = plugin;
 		this.value = "";
-		this.onSubmit = onSubmit;
 		this.submited = false;
+		this.canCancelModal = canCancelModal;
+		this.onSubmit = onSubmit;
 	}
 
-	onOpen() {
+	async onOpen() {
+		if (
+			this.plugin.settings.fileEncrypt.encrypt &&
+			!this.plugin.settings.fileEncrypt.isAlreadyEncrypted
+		) {
+			new Encrypt(this.app, this.plugin).encryptFilesInDirectory();
+
+			this.plugin.settings.fileEncrypt.isAlreadyEncrypted = true;
+			await this.plugin.saveSettings();
+		}
+
 		const { modalEl, contentEl } = this; //take modal and modal_content (as HTML elements)
+
 		contentEl.empty(); //clear the old content because modal reopen when we click outside
 
 		// get the app-container and give it a class to give the blur-effect
@@ -38,7 +59,7 @@ export class ModalEnterPassword extends Modal {
 			".password_modal .modal-close-button"
 		);
 
-		if (close_btn && !this.plugin.canCancleModal) {
+		if (close_btn && !this.canCancelModal) {
 			this.modalEl.removeChild(close_btn);
 		}
 
@@ -58,11 +79,7 @@ export class ModalEnterPassword extends Modal {
 			this.value = text.value;
 		});
 
-		//README: its really needed. IDK why but when obsidian starts to work
-		//our focuse always disappears. If i set timeout the focus works
-		setTimeout(() => {
-			password_input.focus();
-		}, 200);
+		password_input.focus();
 
 		new Setting(contentEl)
 			.setName("Please enter your password to verify")
@@ -84,7 +101,9 @@ export class ModalEnterPassword extends Modal {
 	}
 
 	async comparePassword(lockIcon: HTMLSpanElement) {
-		if (this.value !== this.plugin.settings.password) {
+		// const basePath: string = (this.app.vault.adapter as any).basePath;
+
+		if (hash(this.value) !== this.plugin.settings.password) {
 			//if the password isnt correct
 
 			const desc = document.querySelector(
@@ -108,6 +127,16 @@ export class ModalEnterPassword extends Modal {
 			if (this.plugin.settings.animations) {
 				lockIcon.textContent = "🔓";
 				await new Promise((resolve) => setTimeout(resolve, 50));
+
+				if (
+					this.plugin.settings.fileEncrypt &&
+					this.plugin.settings.fileEncrypt.isAlreadyEncrypted
+				) {
+					new Decrypt(
+						this.app,
+						this.plugin
+					).decryptFilesInDirectory();
+				}
 			}
 
 			//we use submited in case we clicked out our password modal
@@ -118,21 +147,17 @@ export class ModalEnterPassword extends Modal {
 	}
 
 	onClose() {
-		const passMatch = this.value === this.plugin.settings.password;
+		const passMatch = hash(this.value) === this.plugin.settings.password;
 
-		if ((passMatch && this.submited) || this.plugin.canCancleModal) {
+		if ((passMatch && this.submited) || this.canCancelModal) {
 			//if our password is right and we submitted the modal
 			//or the user can simply close the modal by clicking outside
 
 			//notifications
-			if (passMatch && !this.plugin.canCancleModal) {
+			if (passMatch && !this.canCancelModal) {
 				new Notice("you confirmed your password ✔");
-			} else if (
-				passMatch &&
-				this.plugin.canCancleModal &&
-				this.submited
-			) {
-				new Notice("you turned off password protection ❌");
+			} else if (passMatch && this.canCancelModal && this.submited) {
+				new Notice("you turned off the password protection ❌");
 			}
 
 			//remove blur effect

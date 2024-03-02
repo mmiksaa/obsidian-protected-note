@@ -1,14 +1,15 @@
 import { App, Modal, Notice, Setting } from "obsidian";
-import ExamplePlugin from "../main";
+import main from "../main";
+import { hash } from "./hash";
 
 export class ModalSetPassword extends Modal {
-	plugin: ExamplePlugin;
+	plugin: main;
 	value: string;
 	value_pass: string;
 	value_repass: string;
 	onSubmit?: () => void;
 
-	constructor(app: App, plugin: ExamplePlugin, onSubmit?: () => void) {
+	constructor(app: App, plugin: main, onSubmit?: () => void) {
 		super(app);
 		this.plugin = plugin;
 		this.value_pass = "";
@@ -78,8 +79,7 @@ export class ModalSetPassword extends Modal {
 			this.value_pass === this.value_repass &&
 			this.value_pass.length >= 1
 		) {
-			//set a new password if the inputs are the same
-			this.plugin.settings.password = this.value_pass;
+			this.plugin.settings.password = hash(this.value_pass);
 			await this.plugin.saveSettings();
 
 			//set the flag to true if our requirements are met.

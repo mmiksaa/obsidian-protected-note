@@ -1,7 +1,7 @@
 {
 	"name": "protected-note",
-	"version": "1.0.0",
-	"description": "set Password and Protect your notes from other people",
+	"version": "1.1.0",
+	"description": "Set Password and Protect your notes from other people. Encrypt and Decrypt all notes!",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -12,6 +12,7 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
+		"@types/crypto-js": "^4.2.2",
 		"@types/node": "^16.11.6",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",
@@ -20,5 +21,16 @@
 		"obsidian": "latest",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
+	},
+	"dependencies": {
+		"@capacitor/filesystem": "^5.2.1",
+		"@types/node-forge": "^1.3.11",
+		"browserfs": "^1.4.3",
+		"crypto": "^1.0.1",
+		"crypto-js": "^4.2.0",
+		"dropbox": "^10.34.0",
+		"electron": "^29.0.1",
+		"node-forge": "^1.3.1",
+		"openpgp": "^5.11.1"
 	}
 }
