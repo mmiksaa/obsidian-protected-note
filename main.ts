@@ -6,7 +6,7 @@ import {
 	SettingsTab,
 } from "./components/settings";
 import { lockSVG } from "./components/svgIcons";
-import { Encrypt } from "components/encrypt";
+import { hash } from "components/hash";
 import { AutoLock } from "components/autolock";
 
 export default class PasswordPlugin extends Plugin {
@@ -18,6 +18,16 @@ export default class PasswordPlugin extends Plugin {
 		await this.loadSettings();
 		this.isLogged = false;
 		// const basePath: string = (this.app.vault.adapter as any).basePath;
+
+		if (this.settings.isFirstLoad && this.settings.enablePass) {
+			this.settings.password = hash(this.settings.password);
+			this.settings.isFirstLoad = false;
+
+			this.saveSettings();
+		} else {
+			this.settings.isFirstLoad = false;
+			this.saveSettings();
+		}
 
 		this.app.workspace.onLayoutReady(async () => {
 			if (this.settings.enablePass) {
@@ -51,6 +61,14 @@ export default class PasswordPlugin extends Plugin {
 
 		//creating our settings
 		this.addSettingTab(new SettingsTab(this.app, this));
+	}
+
+	onunload() {
+		this.settings.enablePass = false;
+		this.settings.password = "";
+		this.settings.autoLock = "0";
+
+		this.saveSettings();
 	}
 
 	async loadSettings() {
