@@ -14,16 +14,18 @@ Make sure you read the entire documentation, especially about encryption. Rememb
 
 ## Set password 🔑
 
--   go to settings > community plugins > protected note and enable password.
--   set any password you want on the modal.
+- go to settings > community plugins > protected note and enable password.
+- set any password you want on the modal.
 
 ## Encrypt and Decrypt 💾
 
--   now you can encrypt all .md files.
--   make sure that you have backed up your files before enabling encryption.
--   when you exit obsidian, all files won't be encrypted. This happens because obsidian doesn't allow the encryption function to start when you're closing obsidian (_if you know how to encrypt files when you're leaving obsidian help me with your code_).
--   if you want to encrypt all your files when you leave you can use the ribbon icon.
--   encryption was tested on Android and Windows. Be careful if you want to use it on other operating system.
+- now you can encrypt all .md files.
+- make sure that you have backed up your files before enabling encryption.
+- when you exit obsidian, all files won't be encrypted. This happens because obsidian doesn't allow to start the encryption function when you're closing obsidian (_if you know how to encrypt files when you're leaving obsidian help me with code_).
+- if you want to encrypt all your files when you leave you can use the ribbon icon.
+- encryption was tested on Android and Windows. Be careful if you want to use it on other operating system.
+
+> If you want to help me with my code, try to contact me through GitHub, or open a pull request
 
 ## Settings (all) ⚙
 
