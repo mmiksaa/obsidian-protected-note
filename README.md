@@ -1,5 +1,8 @@
 # <img height="26"  style="height: 26px; max-width: 100%;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/2023_Obsidian_logo.svg/1200px-2023_Obsidian_logo.svg.png"  > Obsidian Protected Note
 
+![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22protected-note%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
+
+
 ### Set Password and hide your notes from other people. 🔒
 
 This plugin for [Obsidian](https://obsidian.md/) let you set any password you want!
