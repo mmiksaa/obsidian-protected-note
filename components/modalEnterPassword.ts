@@ -48,7 +48,7 @@ export class ModalEnterPassword extends Modal {
 
 		modalEl.classList.add("password_modal");
 
-		const title = contentEl.createEl("h1", { text: "Valid the user " });
+		const title = contentEl.createEl("h1", { text: "Authenticate Yourself" });
 		const lockIcon = title.createEl("span", {
 			text: "🔒",
 			cls: "password_modal__icon",
