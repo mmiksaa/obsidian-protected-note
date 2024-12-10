@@ -6,32 +6,31 @@ import {
 	SettingsTab,
 } from "./components/settings";
 import { lockSVG } from "./components/svgIcons";
-import { hash } from "components/hash";
 import { AutoLock } from "components/autolock";
+import { FolderLock } from "components/folderLock";
 
 export default class PasswordPlugin extends Plugin {
 	settings: PluginSettings;
 	toggleFlag: boolean;
-	isLogged: boolean;
 
 	async onload() {
 		await this.loadSettings();
-		this.isLogged = false;
+
+		const folderLock = new FolderLock(this.app, this);
+		const modalEnterPassword = new ModalEnterPassword(this.app, this);
+
+		this.settings.isLocked = true;
+		this.saveSettings();
 		// const basePath: string = (this.app.vault.adapter as any).basePath;
 
-		if (this.settings.isFirstLoad && this.settings.enablePass) {
-			this.settings.password = hash(this.settings.password);
-			this.settings.isFirstLoad = false;
-
-			this.saveSettings();
-		} else {
-			this.settings.isFirstLoad = false;
-			this.saveSettings();
-		}
-
 		this.app.workspace.onLayoutReady(async () => {
-			if (this.settings.enablePass) {
-				new ModalEnterPassword(this.app, this).open();
+			if (this.settings.enablePass && !this.settings.folder) {
+				modalEnterPassword.open();
+			}
+
+			if (this.settings.enablePass && this.settings.folder) {
+				folderLock.lock();
+				folderLock.closeOnLocked();
 			}
 
 			if (this.settings.enablePass && this.settings.autoLock !== "0") {
@@ -50,8 +49,17 @@ export default class PasswordPlugin extends Plugin {
 
 		addIcon("lock127", lockSVG);
 		this.addRibbonIcon("lock127", ribbonText, async () => {
+			const settings = this.settings;
+
 			if (this.settings.enablePass) {
-				new ModalEnterPassword(this.app, this).open();
+				if (!settings.folder) {
+					modalEnterPassword.open();
+				} else {
+					folderLock.closeOnLocked();
+					settings.isLocked = true;
+					this.saveSettings();
+					new Notice(`'${settings.folder}' "folder is locked 🔒`);
+				}
 			} else {
 				new Notice(
 					"You must set a password if you want to use protection!"

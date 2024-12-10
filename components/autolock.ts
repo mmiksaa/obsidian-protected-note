@@ -1,6 +1,7 @@
 import main from "main";
-import { App } from "obsidian";
+import { App, Notice } from "obsidian";
 import { ModalEnterPassword } from "./modalEnterPassword";
+import { FolderLock } from "./folderLock";
 
 export class AutoLock {
 	app: App;
@@ -20,7 +21,7 @@ export class AutoLock {
 
 	async startTimer() {
 		document.addEventListener(
-			"mousemove",
+			"mousedown",
 			this.handleUserActivity.bind(this)
 		);
 
@@ -34,14 +35,16 @@ export class AutoLock {
 
 	handleUserActivity() {
 		clearTimeout(this.idleTimeout);
+		const settings = this.plugin.settings;
 
-		if (!this.isAlreadyOpen && this.minutes !== "0") {
+		if (!settings.isLocked && this.minutes !== "0") {
 			this.idleTimeout = setTimeout(() => {
-				new ModalEnterPassword(this.app, this.plugin, false, () => {
-					this.isAlreadyOpen = false;
-				}).open();
-
-				this.isAlreadyOpen = true;
+				if (settings.folder) {
+					new FolderLock(this.app, this.plugin).closeOnLocked();
+					new Notice(`'${settings.folder}' "folder is locked 🔒`);
+				} else {
+					new ModalEnterPassword(this.app, this.plugin).open();
+				}
 			}, Number(this.minutes) * 60000);
 		}
 	}

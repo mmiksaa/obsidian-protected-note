@@ -11,29 +11,42 @@ export class ModalEnterPassword extends Modal {
 	submited: boolean;
 	lockIcon: HTMLSpanElement;
 	onSubmit?: () => void;
-	canCancelModal?: boolean;
+	onLeave?: () => void;
+	isClosable?: boolean;
+	disablingPass?: boolean;
 
 	constructor(
 		app: App,
 		plugin: main,
-		canCancelModal?: boolean,
-		onSubmit?: () => void
+		isClosable?: boolean,
+		onSubmit?: () => void,
+		onLeave?: () => void,
+		disablingPass?: boolean
 	) {
 		super(app);
 		this.plugin = plugin;
 		this.value = "";
 		this.submited = false;
-		this.canCancelModal = canCancelModal;
+		this.isClosable = isClosable;
 		this.onSubmit = onSubmit;
+		this.onLeave = onLeave;
+		this.disablingPass = disablingPass;
 	}
 
 	async onOpen() {
+		this.value = "";
+		this.plugin.settings.isLocked = true;
+		await this.plugin.saveSettings();
+
 		if (
 			this.plugin.settings.fileEncrypt.encrypt &&
-			!this.plugin.settings.fileEncrypt.isAlreadyEncrypted
+			!this.plugin.settings.fileEncrypt.isAlreadyEncrypted &&
+			!this.disablingPass
 		) {
 			new Encrypt(this.app, this.plugin).encryptFilesInDirectory();
 
+			//TODO: перенести эту логику в другой файл
+			console.log("work first ");
 			this.plugin.settings.fileEncrypt.isAlreadyEncrypted = true;
 			await this.plugin.saveSettings();
 		}
@@ -48,7 +61,9 @@ export class ModalEnterPassword extends Modal {
 
 		modalEl.classList.add("password_modal");
 
-		const title = contentEl.createEl("h1", { text: "Valid the user " });
+		const title = contentEl.createEl("h1", {
+			text: "Your password ",
+		});
 		const lockIcon = title.createEl("span", {
 			text: "🔒",
 			cls: "password_modal__icon",
@@ -59,7 +74,7 @@ export class ModalEnterPassword extends Modal {
 			".password_modal .modal-close-button"
 		);
 
-		if (close_btn && !this.canCancelModal) {
+		if (close_btn && !this.isClosable) {
 			this.modalEl.removeChild(close_btn);
 		}
 
@@ -101,10 +116,18 @@ export class ModalEnterPassword extends Modal {
 	}
 
 	async comparePassword(lockIcon: HTMLSpanElement) {
-		// const basePath: string = (this.app.vault.adapter as any).basePath;
+		//TODO: посмотреть нужен ли этот комментарий
+		// const basePath: string = (this.app.vault.adapter as any).basePath; //TODO: удалить
 
 		if (hash(this.value) !== this.plugin.settings.password) {
 			//if the password isnt correct
+
+			this.value = "";
+			//TODO: лучше получать инпут здесь или же полученный инпут на уровень выше вставлять в переменную
+			const input = document.querySelector(
+				".password_input"
+			) as HTMLInputElement;
+			input.value = "";
 
 			const desc = document.querySelector(
 				".password_modal__inner .setting-item-info .setting-item-name"
@@ -132,6 +155,8 @@ export class ModalEnterPassword extends Modal {
 					this.plugin.settings.fileEncrypt &&
 					this.plugin.settings.fileEncrypt.isAlreadyEncrypted
 				) {
+					console.log("work second");
+
 					new Decrypt(
 						this.app,
 						this.plugin
@@ -140,6 +165,7 @@ export class ModalEnterPassword extends Modal {
 			}
 
 			//we use submited in case we clicked out our password modal
+			this.plugin.settings.isLocked = false;
 			this.submited = true;
 			this.plugin.toggleFlag = false;
 			this.close();
@@ -149,16 +175,9 @@ export class ModalEnterPassword extends Modal {
 	onClose() {
 		const passMatch = hash(this.value) === this.plugin.settings.password;
 
-		if ((passMatch && this.submited) || this.canCancelModal) {
+		if ((passMatch && this.submited) || this.isClosable) {
 			//if our password is right and we submitted the modal
 			//or the user can simply close the modal by clicking outside
-
-			//notifications
-			if (passMatch && !this.canCancelModal) {
-				new Notice("you confirmed your password ✔");
-			} else if (passMatch && this.canCancelModal && this.submited) {
-				new Notice("you turned off the password protection ❌");
-			}
 
 			//remove blur effect
 			const app_container = document.querySelector(".app-container");
@@ -176,9 +195,23 @@ export class ModalEnterPassword extends Modal {
 				}, 500);
 			}
 
-			if (this.onSubmit) {
-				this.onSubmit();
+			if (passMatch) {
+				if (
+					this.plugin.settings.fileEncrypt &&
+					this.plugin.settings.fileEncrypt.isAlreadyEncrypted
+				) {
+					new Decrypt(
+						this.app,
+						this.plugin
+					).decryptFilesInDirectory();
+				}
+
+				this.plugin.settings.isLocked = false;
 			}
+
+			this.plugin.saveSettings();
+			if (!passMatch && this.onLeave) this.onLeave();
+			if (this.onSubmit) this.onSubmit();
 		} else if (!passMatch || !this.submited) {
 			this.open(); //reopen the modal if we clicked outside
 		}
