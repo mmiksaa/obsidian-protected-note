@@ -27,6 +27,7 @@ Imagine you have something private in your notes. Well, you're in luck, because 
 > If you'd like to help with my code, feel free to reach out on GitHub or open a pull request.
 
 </br>
+
 ## Settings (all) ⚙
 
 **Password Protection**: click Enable to set a new password. To Disable the password, click the toggle and verify your identity.
