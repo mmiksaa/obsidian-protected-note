@@ -14,6 +14,7 @@ export class ModalEnterPassword extends Modal {
 	onLeave?: () => void;
 	isClosable?: boolean;
 	disablingPass?: boolean;
+	desc: HTMLDivElement | null;
 
 	constructor(
 		app: App,
@@ -31,25 +32,13 @@ export class ModalEnterPassword extends Modal {
 		this.onSubmit = onSubmit;
 		this.onLeave = onLeave;
 		this.disablingPass = disablingPass;
+		this.desc = null;
 	}
 
 	async onOpen() {
 		this.value = "";
 		this.plugin.settings.isLocked = true;
 		await this.plugin.saveSettings();
-
-		if (
-			this.plugin.settings.fileEncrypt.encrypt &&
-			!this.plugin.settings.fileEncrypt.isAlreadyEncrypted &&
-			!this.disablingPass
-		) {
-			new Encrypt(this.app, this.plugin).encryptFilesInDirectory();
-
-			//TODO: перенести эту логику в другой файл
-			console.log("work first ");
-			this.plugin.settings.fileEncrypt.isAlreadyEncrypted = true;
-			await this.plugin.saveSettings();
-		}
 
 		const { modalEl, contentEl } = this; //take modal and modal_content (as HTML elements)
 
@@ -86,6 +75,7 @@ export class ModalEnterPassword extends Modal {
 			value: this.value,
 			placeholder: "Enter your password",
 		});
+
 		password_input.classList.add("password_input");
 
 		//give them events
@@ -93,8 +83,6 @@ export class ModalEnterPassword extends Modal {
 			const text = event.target as HTMLInputElement;
 			this.value = text.value;
 		});
-
-		password_input.focus();
 
 		new Setting(contentEl)
 			.setName("Please enter your password to verify")
@@ -108,6 +96,28 @@ export class ModalEnterPassword extends Modal {
 					})
 			);
 
+		this.desc = document.querySelector(
+			".password_modal__inner .setting-item-name"
+		);
+
+		if (
+			this.plugin.settings.fileEncrypt.encrypt &&
+			!this.plugin.settings.fileEncrypt.isAlreadyEncrypted &&
+			!this.disablingPass
+		) {
+			password_input.disabled = true;
+
+			if (this.desc) this.desc.innerText = "🛆 Encrypting all files..";
+
+			await new Encrypt(this.app, this.plugin).encryptFilesInDirectory();
+
+			password_input.disabled = false;
+			if (this.desc)
+				this.desc.innerText = "Please enter your password to verify";
+		}
+
+		password_input.focus();
+
 		password_input.addEventListener("keypress", (event) => {
 			if (event.key === "Enter") {
 				this.comparePassword(lockIcon);
@@ -116,26 +126,20 @@ export class ModalEnterPassword extends Modal {
 	}
 
 	async comparePassword(lockIcon: HTMLSpanElement) {
-		//TODO: посмотреть нужен ли этот комментарий
-		// const basePath: string = (this.app.vault.adapter as any).basePath; //TODO: удалить
+		const input = document.querySelector(
+			".password_input"
+		) as HTMLInputElement;
+		input.value = "";
 
 		if (hash(this.value) !== this.plugin.settings.password) {
 			//if the password isnt correct
 
 			this.value = "";
-			//TODO: лучше получать инпут здесь или же полученный инпут на уровень выше вставлять в переменную
-			const input = document.querySelector(
-				".password_input"
-			) as HTMLInputElement;
-			input.value = "";
 
-			const desc = document.querySelector(
-				".password_modal__inner .setting-item-info .setting-item-name"
-			);
-
-			if (desc) {
-				desc.textContent = "Sorry wrong password. Please try again";
-				desc.classList.add("password_modal__alert");
+			if (this.desc) {
+				this.desc.textContent =
+					"Sorry wrong password. Please try again";
+				this.desc.classList.add("password_modal__alert");
 			}
 
 			//if animations are set to false, it is not shown.
@@ -150,18 +154,23 @@ export class ModalEnterPassword extends Modal {
 			if (this.plugin.settings.animations) {
 				lockIcon.textContent = "🔓";
 				await new Promise((resolve) => setTimeout(resolve, 50));
+			}
 
-				if (
-					this.plugin.settings.fileEncrypt &&
-					this.plugin.settings.fileEncrypt.isAlreadyEncrypted
-				) {
-					console.log("work second");
-
-					new Decrypt(
-						this.app,
-						this.plugin
-					).decryptFilesInDirectory();
+			if (
+				this.plugin.settings.fileEncrypt &&
+				this.plugin.settings.fileEncrypt.isAlreadyEncrypted
+			) {
+				if (this.desc) {
+					this.desc.classList.remove("password_modal__alert");
+					this.desc.innerText = "🛆 Decrypting all files..";
 				}
+
+				input.disabled = true;
+
+				await new Decrypt(
+					this.app,
+					this.plugin
+				).decryptFilesInDirectory();
 			}
 
 			//we use submited in case we clicked out our password modal
@@ -193,20 +202,6 @@ export class ModalEnterPassword extends Modal {
 				setTimeout(() => {
 					containerBlur.classList.remove("blur");
 				}, 500);
-			}
-
-			if (passMatch) {
-				if (
-					this.plugin.settings.fileEncrypt &&
-					this.plugin.settings.fileEncrypt.isAlreadyEncrypted
-				) {
-					new Decrypt(
-						this.app,
-						this.plugin
-					).decryptFilesInDirectory();
-				}
-
-				this.plugin.settings.isLocked = false;
 			}
 
 			this.plugin.saveSettings();

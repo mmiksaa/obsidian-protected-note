@@ -41,7 +41,7 @@ export class AutoLock {
 			this.idleTimeout = setTimeout(() => {
 				if (settings.folder) {
 					new FolderLock(this.app, this.plugin).closeOnLocked();
-					new Notice(`'${settings.folder}' "folder is locked 🔒`);
+					new Notice(`'${settings.folder}' folder is locked 🔒`);
 				} else {
 					new ModalEnterPassword(this.app, this.plugin).open();
 				}

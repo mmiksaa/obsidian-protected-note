@@ -43,7 +43,7 @@
 }
 
 .shake_anim {
-	animation: shake 0.3s;
+	animation: shake 0.2s;
 	animation-direction: alternate;
 }
 

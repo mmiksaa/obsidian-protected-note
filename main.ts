@@ -19,10 +19,6 @@ export default class PasswordPlugin extends Plugin {
 		const folderLock = new FolderLock(this.app, this);
 		const modalEnterPassword = new ModalEnterPassword(this.app, this);
 
-		this.settings.isLocked = true;
-		this.saveSettings();
-		// const basePath: string = (this.app.vault.adapter as any).basePath;
-
 		this.app.workspace.onLayoutReady(async () => {
 			if (this.settings.enablePass && !this.settings.folder) {
 				modalEnterPassword.open();
@@ -56,9 +52,8 @@ export default class PasswordPlugin extends Plugin {
 					modalEnterPassword.open();
 				} else {
 					folderLock.closeOnLocked();
-					settings.isLocked = true;
 					this.saveSettings();
-					new Notice(`'${settings.folder}' "folder is locked 🔒`);
+					new Notice(`'${settings.folder}' folder is locked 🔒`);
 				}
 			} else {
 				new Notice(

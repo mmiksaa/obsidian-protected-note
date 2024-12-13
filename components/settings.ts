@@ -65,6 +65,8 @@ export class SettingsTab extends PluginSettingTab {
 										this.plugin.settings.autoLock = "0";
 										this.plugin.settings.fileEncrypt.encrypt =
 											false;
+										this.plugin.settings.fileEncrypt.isAlreadyEncrypted =
+											false;
 										await this.plugin.saveSettings();
 
 										new Notice(
@@ -74,8 +76,8 @@ export class SettingsTab extends PluginSettingTab {
 
 									this.display(); //display again in case our toggle changed but "if" didn't go
 								},
-								() => {}
-								// true
+								() => {},
+								true
 							);
 
 							modal.open();
@@ -164,6 +166,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.fileEncrypt.encrypt)
+					.setDisabled(!this.plugin.settings.password)
 					.onChange(async (value) => {
 						this.plugin.settings.fileEncrypt.encrypt = value;
 						await this.plugin.saveSettings();

@@ -2,48 +2,46 @@
 
 ![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22protected-note%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 
-
 ### Set Password and hide your notes from other people. 🔒
 
 This plugin for [Obsidian](https://obsidian.md/) let you set any password you want!
 
+**ATTENTION ❗** \
+Note that encryption is not enabled by default, and the plugin can be used without it. Also, keep in mind that encryption is still in beta.
+
 **Why do i need that?** \
-Imagine that you have something to hide in your notes. Well, you're lucky, because you have protected note ;D
+Imagine you have something private in your notes. Well, you're in luck, because with Protected Note, your secrets are safe! ;D
 
-**WARNING ❗** \
-Make sure you read the entire documentation, especially about encryption. Remember that it's in beta.
-
-![screenshot-full](https://sun9-60.userapi.com/impg/OVolxXnQGP32XMe_L62TgA_VT2thX8NxmUoy2Q/Khc5yYjszb4.jpg?size=1328x951&quality=95&sign=dc7eb407e94b078c7a2c5fff78e4d3c5&type=album)
+![screenshot-full](https://sun9-75.userapi.com/impg/yxoep7oJW71jyiVbX5FqQf0_b2XHTm81BhE4UA/LlQPHCwZdWI.jpg?size=1130x799&quality=95&sign=463771f135303a6d367a1d6b2353ce6c&type=album)
 
 ## Set password 🔑
 
-- go to settings > community plugins > protected note and enable password.
-- set any password you want on the modal.
+-   Go to settings > community plugins > protected note > enable password.
 
 ## Encrypt and Decrypt 💾
 
-- now you can encrypt all .md files.
-- make sure that you have backed up your files before enabling encryption.
-- when you exit obsidian, all files won't be encrypted. This happens because obsidian doesn't allow to start the encryption function when you're closing obsidian (_if you know how to encrypt files when you're leaving obsidian help me with code_).
-- if you want to encrypt all your files when you leave you can use the ribbon icon.
-- encryption was tested on Android and Windows. Be careful if you want to use it on other operating system.
+-   Back up your files before enabling encryption to prevent data loss.
+-   When you close Obsidian, your files won't be encrypted because Obsidian can't run encryption while closing.
+-   To encrypt all your files upon exit, use the ribbon icon.
 
-> If you want to help me with my code, try to contact me through GitHub, or open a pull request
+> If you'd like to help with my code, feel free to reach out on GitHub or open a pull request.
 
 ## Settings (all) ⚙
 
-**Disable/enable the password**: if you want to create a new password you, have to click enable. If you want to disable the password you need to verify modal.
+**Password Protection**: click Enable to set a new password. To Disable the password, click the toggle and verify your identity.
 
-**Show animations**: if you enable this settings, you will have animations. First animation is on the title lock emoji. The second one when you confirm your password you can see transition blur
+**Protected Folder**: select a specific folder to protect.
 
-**Auto lock**: enable if you want to block obsidian if you're not active.
+**Auto-Lock**: automatically lock Obsidian when you're inactive.
 
-**File encryption**: encrypt and decrypt all files using cipher aes.
+**Animations**: turn this off to remove animations. This will stop the lock emoji animation in the title and the blur transition when you confirm your password.
+
+**File encryption**: Secure your files with AES encryption.
 
 ---
 
 **This plugin will be developed and added new features** 🧬
 
-If you find this plugin and workflow useful, you can give me some coffee money ☕
+If you find this plugin and workflow useful, you can give me some coffee ☕
 
 [<img height="36" style="height: 36px; max-width: 100%;" src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png"  alt="Buy Me a Coffee at ko-fi.com">](https://buymeacoffee.com/gadgihanovm)
