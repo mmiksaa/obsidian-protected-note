@@ -9,7 +9,8 @@ export interface PluginSettings {
 	animations: boolean;
 	fileEncrypt: { encrypt: boolean; isAlreadyEncrypted: boolean };
 	autoLock: string;
-	isFirstLoad: boolean;
+	folder: string;
+	isLocked: boolean;
 }
 
 export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
@@ -18,7 +19,8 @@ export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
 	animations: true,
 	fileEncrypt: { encrypt: false, isAlreadyEncrypted: false },
 	autoLock: "0",
-	isFirstLoad: true,
+	folder: "",
+	isLocked: false,
 };
 
 export class SettingsTab extends PluginSettingTab {
@@ -33,6 +35,10 @@ export class SettingsTab extends PluginSettingTab {
 		let { containerEl } = this;
 
 		containerEl.empty(); //clear the old content settings reopen when we open it again
+
+		this.containerEl.createEl("h2", {
+			text: "Set a password",
+		});
 
 		new Setting(containerEl)
 			.setName("Enable/Disable the password")
@@ -59,11 +65,19 @@ export class SettingsTab extends PluginSettingTab {
 										this.plugin.settings.autoLock = "0";
 										this.plugin.settings.fileEncrypt.encrypt =
 											false;
+										this.plugin.settings.fileEncrypt.isAlreadyEncrypted =
+											false;
 										await this.plugin.saveSettings();
+
+										new Notice(
+											"you turned off the password protection ❌"
+										);
 									}
 
 									this.display(); //display again in case our toggle changed but "if" didn't go
-								}
+								},
+								() => {},
+								true
 							);
 
 							modal.open();
@@ -87,19 +101,28 @@ export class SettingsTab extends PluginSettingTab {
 					})
 			);
 
+		this.containerEl.createEl("h2", {
+			text: "Other",
+		});
+
 		new Setting(containerEl)
-			.setName("Show animations")
+			.setName("Protected folder")
 			.setDesc(
-				"Enable this if you want to see modal and background animations."
+				"Enter the path to protect only a specific folder. Leave the field empty if you want to protect the entire Obsidian."
 			)
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.animations)
+			.addText((text) => {
+				text.setPlaceholder("Example: folder/myFolder")
+					.setValue(this.plugin.settings.folder)
 					.onChange(async (value) => {
-						this.plugin.settings.animations = value;
+						const path =
+							value[value.length - 1] === "/"
+								? value.slice(0, -1)
+								: value;
+						this.plugin.settings.folder = path;
 						await this.plugin.saveSettings();
 					});
-			});
+			})
+			.setDisabled(this.plugin.settings.enablePass);
 
 		new Setting(containerEl)
 			.setName("Auto lock")
@@ -117,8 +140,22 @@ export class SettingsTab extends PluginSettingTab {
 				);
 			});
 
+		new Setting(containerEl)
+			.setName("Show animations")
+			.setDesc(
+				"Enable this if you want to see modal and background animations."
+			)
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.animations)
+					.onChange(async (value) => {
+						this.plugin.settings.animations = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
 		this.containerEl.createEl("h2", {
-			text: "High files protection (beta)",
+			text: "🛆 High files protection (beta)",
 		});
 
 		new Setting(containerEl)
@@ -129,12 +166,15 @@ export class SettingsTab extends PluginSettingTab {
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.fileEncrypt.encrypt)
+					.setDisabled(!this.plugin.settings.password)
 					.onChange(async (value) => {
 						this.plugin.settings.fileEncrypt.encrypt = value;
 						await this.plugin.saveSettings();
 
 						if (value) {
 							new Notice("High file protection is turned on 💾");
+						} else {
+							new Notice("High file protection is turned off ❌");
 						}
 					})
 			);

@@ -11,32 +11,34 @@ export class ModalEnterPassword extends Modal {
 	submited: boolean;
 	lockIcon: HTMLSpanElement;
 	onSubmit?: () => void;
-	canCancelModal?: boolean;
+	onLeave?: () => void;
+	isClosable?: boolean;
+	disablingPass?: boolean;
+	desc: HTMLDivElement | null;
 
 	constructor(
 		app: App,
 		plugin: main,
-		canCancelModal?: boolean,
-		onSubmit?: () => void
+		isClosable?: boolean,
+		onSubmit?: () => void,
+		onLeave?: () => void,
+		disablingPass?: boolean
 	) {
 		super(app);
 		this.plugin = plugin;
 		this.value = "";
 		this.submited = false;
-		this.canCancelModal = canCancelModal;
+		this.isClosable = isClosable;
 		this.onSubmit = onSubmit;
+		this.onLeave = onLeave;
+		this.disablingPass = disablingPass;
+		this.desc = null;
 	}
 
 	async onOpen() {
-		if (
-			this.plugin.settings.fileEncrypt.encrypt &&
-			!this.plugin.settings.fileEncrypt.isAlreadyEncrypted
-		) {
-			new Encrypt(this.app, this.plugin).encryptFilesInDirectory();
-
-			this.plugin.settings.fileEncrypt.isAlreadyEncrypted = true;
-			await this.plugin.saveSettings();
-		}
+		this.value = "";
+		this.plugin.settings.isLocked = true;
+		await this.plugin.saveSettings();
 
 		const { modalEl, contentEl } = this; //take modal and modal_content (as HTML elements)
 
@@ -48,7 +50,9 @@ export class ModalEnterPassword extends Modal {
 
 		modalEl.classList.add("password_modal");
 
-		const title = contentEl.createEl("h1", { text: "Valid the user " });
+		const title = contentEl.createEl("h1", {
+			text: "Your password ",
+		});
 		const lockIcon = title.createEl("span", {
 			text: "🔒",
 			cls: "password_modal__icon",
@@ -59,7 +63,7 @@ export class ModalEnterPassword extends Modal {
 			".password_modal .modal-close-button"
 		);
 
-		if (close_btn && !this.canCancelModal) {
+		if (close_btn && !this.isClosable) {
 			this.modalEl.removeChild(close_btn);
 		}
 
@@ -71,6 +75,7 @@ export class ModalEnterPassword extends Modal {
 			value: this.value,
 			placeholder: "Enter your password",
 		});
+
 		password_input.classList.add("password_input");
 
 		//give them events
@@ -78,8 +83,6 @@ export class ModalEnterPassword extends Modal {
 			const text = event.target as HTMLInputElement;
 			this.value = text.value;
 		});
-
-		password_input.focus();
 
 		new Setting(contentEl)
 			.setName("Please enter your password to verify")
@@ -93,6 +96,28 @@ export class ModalEnterPassword extends Modal {
 					})
 			);
 
+		this.desc = document.querySelector(
+			".password_modal__inner .setting-item-name"
+		);
+
+		if (
+			this.plugin.settings.fileEncrypt.encrypt &&
+			!this.plugin.settings.fileEncrypt.isAlreadyEncrypted &&
+			!this.disablingPass
+		) {
+			password_input.disabled = true;
+
+			if (this.desc) this.desc.innerText = "🛆 Encrypting all files..";
+
+			await new Encrypt(this.app, this.plugin).encryptFilesInDirectory();
+
+			password_input.disabled = false;
+			if (this.desc)
+				this.desc.innerText = "Please enter your password to verify";
+		}
+
+		password_input.focus();
+
 		password_input.addEventListener("keypress", (event) => {
 			if (event.key === "Enter") {
 				this.comparePassword(lockIcon);
@@ -101,18 +126,20 @@ export class ModalEnterPassword extends Modal {
 	}
 
 	async comparePassword(lockIcon: HTMLSpanElement) {
-		// const basePath: string = (this.app.vault.adapter as any).basePath;
+		const input = document.querySelector(
+			".password_input"
+		) as HTMLInputElement;
+		input.value = "";
 
 		if (hash(this.value) !== this.plugin.settings.password) {
 			//if the password isnt correct
 
-			const desc = document.querySelector(
-				".password_modal__inner .setting-item-info .setting-item-name"
-			);
+			this.value = "";
 
-			if (desc) {
-				desc.textContent = "Sorry wrong password. Please try again";
-				desc.classList.add("password_modal__alert");
+			if (this.desc) {
+				this.desc.textContent =
+					"Sorry wrong password. Please try again";
+				this.desc.classList.add("password_modal__alert");
 			}
 
 			//if animations are set to false, it is not shown.
@@ -127,19 +154,27 @@ export class ModalEnterPassword extends Modal {
 			if (this.plugin.settings.animations) {
 				lockIcon.textContent = "🔓";
 				await new Promise((resolve) => setTimeout(resolve, 50));
+			}
 
-				if (
-					this.plugin.settings.fileEncrypt &&
-					this.plugin.settings.fileEncrypt.isAlreadyEncrypted
-				) {
-					new Decrypt(
-						this.app,
-						this.plugin
-					).decryptFilesInDirectory();
+			if (
+				this.plugin.settings.fileEncrypt &&
+				this.plugin.settings.fileEncrypt.isAlreadyEncrypted
+			) {
+				if (this.desc) {
+					this.desc.classList.remove("password_modal__alert");
+					this.desc.innerText = "🛆 Decrypting all files..";
 				}
+
+				input.disabled = true;
+
+				await new Decrypt(
+					this.app,
+					this.plugin
+				).decryptFilesInDirectory();
 			}
 
 			//we use submited in case we clicked out our password modal
+			this.plugin.settings.isLocked = false;
 			this.submited = true;
 			this.plugin.toggleFlag = false;
 			this.close();
@@ -149,16 +184,9 @@ export class ModalEnterPassword extends Modal {
 	onClose() {
 		const passMatch = hash(this.value) === this.plugin.settings.password;
 
-		if ((passMatch && this.submited) || this.canCancelModal) {
+		if ((passMatch && this.submited) || this.isClosable) {
 			//if our password is right and we submitted the modal
 			//or the user can simply close the modal by clicking outside
-
-			//notifications
-			if (passMatch && !this.canCancelModal) {
-				new Notice("you confirmed your password ✔");
-			} else if (passMatch && this.canCancelModal && this.submited) {
-				new Notice("you turned off the password protection ❌");
-			}
 
 			//remove blur effect
 			const app_container = document.querySelector(".app-container");
@@ -176,9 +204,9 @@ export class ModalEnterPassword extends Modal {
 				}, 500);
 			}
 
-			if (this.onSubmit) {
-				this.onSubmit();
-			}
+			this.plugin.saveSettings();
+			if (!passMatch && this.onLeave) this.onLeave();
+			if (this.onSubmit) this.onSubmit();
 		} else if (!passMatch || !this.submited) {
 			this.open(); //reopen the modal if we clicked outside
 		}

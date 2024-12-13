@@ -1,6 +1,7 @@
 import main from "main";
-import { App } from "obsidian";
+import { App, TFile, TFolder } from "obsidian";
 import * as CryptoJS from "crypto-js";
+import { GetMDFiles } from "./getMDFiles";
 
 export class Encrypt {
 	app: App;
@@ -12,17 +13,19 @@ export class Encrypt {
 	}
 
 	async encryptFilesInDirectory() {
-		const files = this.app.vault.getMarkdownFiles();
+		const files = new GetMDFiles(this.app, this.plugin).getFiles();
+		if (!files) return;
 
 		for (const file of files) {
 			const content = await this.app.vault.read(file);
 
-			if (content.length > 1) {
+			if (content.length > 0) {
 				const encryptedContent = this.encryptContent(content);
 				await this.app.vault.modify(file, encryptedContent);
 			}
 		}
 
+		// Устанавливаем флаг и сохраняем настройки
 		this.plugin.settings.fileEncrypt.isAlreadyEncrypted = true;
 		await this.plugin.saveSettings();
 	}
