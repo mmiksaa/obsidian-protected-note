@@ -16,6 +16,12 @@ export class ModalEnterPassword extends Modal {
 	disablingPass?: boolean;
 	desc: HTMLDivElement | null;
 
+	private preventOutsideClose = (event: MouseEvent) => {
+		if (!this.modalEl.contains(event.target as Node)) {
+			event.stopPropagation();
+		}
+	};
+
 	constructor(
 		app: App,
 		plugin: main,
@@ -49,6 +55,23 @@ export class ModalEnterPassword extends Modal {
 		app_container?.classList.add("app-container__lock_password");
 
 		modalEl.classList.add("password_modal");
+
+		if (!this.isClosable) {
+			this.containerEl.addEventListener(
+				"mousedown",
+				this.preventOutsideClose,
+				true
+			);
+			this.containerEl.addEventListener(
+				"click",
+				this.preventOutsideClose,
+				true
+			);
+			this.scope.register([], "Escape", (evt) => {
+				evt.preventDefault();
+				return false;
+			});
+		}
 
 		const title = contentEl.createEl("h1", {
 			text: "Your password ",
@@ -109,7 +132,20 @@ export class ModalEnterPassword extends Modal {
 
 			if (this.desc) this.desc.innerText = "🛆 Encrypting all files..";
 
-			await new Encrypt(this.app, this.plugin).encryptFilesInDirectory();
+			const startTime = Date.now();
+			await new Encrypt(this.app, this.plugin).encryptFilesInDirectory(
+				(done, total) => {
+					if (
+						this.desc &&
+						Date.now() - startTime > 3000 &&
+						(done % 10 === 0 || done === total)
+					) {
+						this.desc.innerText = `🛆 Encrypting files… ${done}/${total} (${
+							total - done
+						} left)`;
+					}
+				}
+			);
 
 			password_input.disabled = false;
 			if (this.desc)
@@ -167,10 +203,20 @@ export class ModalEnterPassword extends Modal {
 
 				input.disabled = true;
 
-				await new Decrypt(
-					this.app,
-					this.plugin
-				).decryptFilesInDirectory();
+				const startTime = Date.now();
+				await new Decrypt(this.app, this.plugin).decryptFilesInDirectory(
+					(done, total) => {
+						if (
+							this.desc &&
+							Date.now() - startTime > 3000 &&
+							(done % 10 === 0 || done === total)
+						) {
+							this.desc.innerText = `🛆 Decrypting files… ${done}/${total} (${
+								total - done
+							} left)`;
+						}
+					}
+				);
 			}
 
 			//we use submited in case we clicked out our password modal

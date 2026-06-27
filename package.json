@@ -1,6 +1,6 @@
 {
 	"name": "protected-note",
-	"version": "1.1.0",
+	"version": "2.1.0",
 	"description": "Set Password and Protect your notes from other people. Encrypt and Decrypt all notes!",
 	"main": "main.js",
 	"scripts": {

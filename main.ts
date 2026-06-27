@@ -33,7 +33,7 @@ export default class PasswordPlugin extends Plugin {
 				new AutoLock(
 					this.app,
 					this,
-					this.settings.autoLock
+					this.settings.autoLock,
 				).startTimer();
 			}
 		});
@@ -57,7 +57,7 @@ export default class PasswordPlugin extends Plugin {
 				}
 			} else {
 				new Notice(
-					"You must set a password if you want to use protection!"
+					"You must set a password if you want to use protection!",
 				);
 			}
 		});
@@ -66,19 +66,13 @@ export default class PasswordPlugin extends Plugin {
 		this.addSettingTab(new SettingsTab(this.app, this));
 	}
 
-	onunload() {
-		this.settings.enablePass = false;
-		this.settings.password = "";
-		this.settings.autoLock = "0";
-
-		this.saveSettings();
-	}
+	onunload() {}
 
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
 			DEFAULT_SETTINGS,
-			await this.loadData()
+			await this.loadData(),
 		);
 	}
 

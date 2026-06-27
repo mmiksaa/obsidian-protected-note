@@ -1,6 +1,7 @@
 import main from "../main";
 import { ModalEnterPassword } from "components/modalEnterPassword";
 import { ModalSetPassword } from "components/modalSetPassword";
+import { ModalEncryptConsent } from "components/modalEncryptConsent";
 import { App, Notice, PluginSettingTab, Setting } from "obsidian";
 
 export interface PluginSettings {
@@ -155,25 +156,39 @@ export class SettingsTab extends PluginSettingTab {
 			});
 
 		this.containerEl.createEl("h2", {
-			text: "🛆 High files protection (beta)",
+			text: "🛆 High files protection",
 		});
 
 		new Setting(containerEl)
 			.setName("File encryption")
 			.setDesc(
-				"This setting will encrypt all your files. Warning: be sure you made backup before starting using this setting. This setting is on beta!"
+				"This setting will encrypt all your files. Warning: be sure you made backup before starting using this setting."
 			)
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.fileEncrypt.encrypt)
 					.setDisabled(!this.plugin.settings.password)
 					.onChange(async (value) => {
-						this.plugin.settings.fileEncrypt.encrypt = value;
-						await this.plugin.saveSettings();
-
 						if (value) {
-							new Notice("High file protection is turned on 💾");
+							new ModalEncryptConsent(
+								this.app,
+								this.plugin,
+								async () => {
+									this.plugin.settings.fileEncrypt.encrypt =
+										true;
+									await this.plugin.saveSettings();
+									new Notice(
+										"High file protection is turned on 💾"
+									);
+									this.display();
+								},
+								() => {
+									this.display();
+								}
+							).open();
 						} else {
+							this.plugin.settings.fileEncrypt.encrypt = false;
+							await this.plugin.saveSettings();
 							new Notice("High file protection is turned off ❌");
 						}
 					})
